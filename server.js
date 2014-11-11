@@ -2,6 +2,15 @@ var express = require('express'),
     curl = require('node-curl'),
     app = express(),
     mws = require('./mws'),
+
+    // We need the amazon keys:
+    // './.secret.key.js' is a file that should look like this:
+    //   exports.keys = {
+    //     accessKeyId: '{key}',
+    //     secretAccessKey: '{key}',
+    //     merchantId: '{key}',
+    //     marketplaceId: '{key}'
+    //   };
     keys = require('./.secret.key.js');
     client = new mws.AmazonMws.Client(keys.accessKeyId, keys.secretAccessKey, keys.merchantId, {});
 
@@ -17,7 +26,7 @@ app.get('/mws/:endpoint/:method', function(req, res) {
   var params = req.params;
   var request = new mws[params.endpoint].requests[params.method]();
   if(request.params['MarketplaceId']) {
-    request.set('MarketplaceId',marketplaceId);
+    request.set('MarketplaceId',keys.marketplaceId);
   }
   for(var prop in req.query) {
     request.set(prop, req.query[prop]);
