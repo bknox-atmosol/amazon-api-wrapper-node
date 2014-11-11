@@ -1,0 +1,9 @@
+{
+  "name":"mws-node-wrapper",
+  "version": "0.0.1",
+  "description": "MWS in node!!",
+  "dependencies": {
+    "express": "4.x.x",
+    "mws-js":"0.1.1"
+  }
+}
