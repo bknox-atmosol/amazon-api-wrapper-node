@@ -11,8 +11,8 @@ var express = require('express'),
     //     merchantId: '{key}',
     //     marketplaceId: '{key}'
     //   };
-    keys = require('./.secret.key.js');
-    client = new mws.AmazonMws.Client(keys.accessKeyId, keys.secretAccessKey, keys.merchantId, {});
+    auth = require('./.secret.key.js');
+    client = new mws.AmazonMws.Client(auth.keys.accessKeyId, auth.keys.secretAccessKey, auth.keys.merchantId, {});
 
 
 app.all('/*', function(req, res, next) {
@@ -26,7 +26,7 @@ app.get('/mws/:endpoint/:method', function(req, res) {
   var params = req.params;
   var request = new mws[params.endpoint].requests[params.method]();
   if(request.params['MarketplaceId']) {
-    request.set('MarketplaceId',keys.marketplaceId);
+    request.set('MarketplaceId',auth.keys.marketplaceId);
   }
   for(var prop in req.query) {
     request.set(prop, req.query[prop]);
