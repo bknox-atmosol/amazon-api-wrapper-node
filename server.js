@@ -22,20 +22,26 @@ app.all('/*', function(req, res, next) {
   next();
 });
 
-app.get('/mws/:endpoint/:method', function(req, res) {
+app.get('/mws/:uri/:method', function(req, res) {
   var params = req.params;
-  var request = new mws[params.endpoint].requests[params.method]();
-  if(request.params['MarketplaceId']) {
-    request.set('MarketplaceId',auth.keys.marketplaceId);
-  }
-  for(var prop in req.query) {
-    request.set(prop, req.query[prop]);
-  }
-  client.invoke(request,
-    function(result){
-      res.send(result);
+  var uri = mws[params.uri];
+  if( uri && uri.requests[params.method]) {
+    var request = new uri.requests[params.method]();
+   
+    if(request.params['MarketplaceId']) {
+      request.set('MarketplaceId',auth.keys.marketplaceId);
     }
-  );
+    for(var prop in req.query) {
+      request.set(prop, req.query[prop]);
+    }
+    client.invoke(request,
+      function(result){
+        res.send(result);
+      }
+    );
+   } else {
+    res.send({'error':'Doesn\'t exist in API.'});
+  }
 });
 
 var server = app.listen(5555, function () {
