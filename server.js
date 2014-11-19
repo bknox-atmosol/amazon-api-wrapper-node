@@ -11,9 +11,8 @@ var express = require('express'),
     //     merchantId: '{key}',
     //     marketplaceId: '{key}'
     //   };
-    auth = require('./.secret.key.js');
+    auth = require('./.secret.key.js'),
     client = new mws.AmazonMws.Client(auth.keys.accessKeyId, auth.keys.secretAccessKey, auth.keys.merchantId, {});
-
 
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", (req.headers.oirgin || "*"));
@@ -27,6 +26,8 @@ app.get('/mws/:uri/:method', function(req, res) {
   var uri = mws[params.uri];
   if( uri && uri.requests[params.method]) {
     var request = new uri.requests[params.method]();
+
+    if(req.query.CreatedAfter) req.query.CreatedAfter = new Date(req.query.CreatedAfter);
    
     if(request.params['MarketplaceId']) {
       request.set('MarketplaceId',auth.keys.marketplaceId);
